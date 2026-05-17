@@ -21,6 +21,7 @@
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.2.2",
+		"@types/luxon": "^3.7.1",
 		"@types/node": "^24",
 		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -35,5 +36,10 @@
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.58.1",
 		"vite": "^8.0.7"
+	},
+	"dependencies": {
+		"daisyui": "^5.5.19",
+		"luxon": "^3.7.2",
+		"ts-md5": "^2.0.1"
 	}
 }

@@ -1,0 +1,91 @@
+<script lang="ts">
+	import { onMount } from "svelte";
+	import type { SongFull, SongDB } from "../types";
+	import { hashSong, songArtIsStored } from "../util/util";
+
+    let { song, width, height, api, fetchArt = false } = $props();
+    let albumArtURL: string = $state('');
+    let songDB: SongDB | null = $state(null);
+    let isLoading: boolean = $state(false);
+
+    onMount(() => {
+        // Retrieve album art from API
+        if (fetchArt === true && song !== null) {
+            isLoading = true;
+            // Check if album art URL is already in local storage
+            const artStorage = songArtIsStored(song);
+            if (artStorage !== null) {
+                albumArtURL = artStorage;
+                isLoading = false;
+            } else {
+                // If art isn't in local storage, request it
+                getSong(song).then((songResponse) => {
+                    songDB = songResponse;
+                    if (songDB !== null) {
+                        getAlbumArt(songDB?.musicbrainzIds ?? null).then((artResponse) => {
+                            if (artResponse !== null) {
+                                console.log("Art request successful");
+                                localStorage.setItem(hashSong(song), artResponse);
+                                albumArtURL = artResponse;
+                                isLoading = false;
+                            }
+                        })
+                    }
+                });
+            }
+        }
+    });
+
+    async function getSong(song: SongFull): Promise<SongDB | null> {
+        // TODO: Can condense the logic here
+        const songMusicBrainz: SongDB | null = await api.getSong(song.name, song.artist, song.album);
+        if (songMusicBrainz !== null) {
+            return new Promise<SongDB | null>((resolve) => resolve(songMusicBrainz));
+        } else {
+            console.error(`'${song.name} by '${song.artist}' was not found.'`);
+            isLoading = false;
+        }
+        return new Promise<SongDB | null>((resolve) => resolve(null));
+    }
+
+    async function getAlbumArt(musicBrainzIds: string[] | null): Promise<string | null> {
+        if (musicBrainzIds !== null) {
+            // TODO: This is broken, need to keep trying IDs until one hits 
+            for (const musicBrainzId of musicBrainzIds) {
+                albumArtURL = await api.getAlbumArt(musicBrainzId) ?? '';
+                // Return first hit 
+                if (albumArtURL !== '') {
+                    return new Promise<string | null>((resolve) => resolve(albumArtURL));
+                }
+            }
+            isLoading = false;
+        }
+        return new Promise<string | null>((resolve) => resolve(null));
+    }
+    $effect(() => console.log(`isLoading = ${isLoading}`));
+</script>
+
+<div
+    style:width={width}
+    style:height={height}
+    class="rounded-lg bg-blue-300 inline-flex border-black border"
+>
+    <div
+        class="album-art border-r border-r-black h-full flex justify-center"
+        style:width=25%
+    >
+        {#if isLoading}
+            <span class="loading loading-spinner loading-sm"></span>
+        {:else}
+            <img class="w-full h-full" src={albumArtURL} alt="Album art" />
+        {/if}
+    </div>
+    <div
+        class="song-info h-full text-left ml-2"
+        style:width=75%
+    >
+        <div class="song text-lg font-bold mt-1 mb-1 w-full max-h-6 overflow-hidden">{song.name}</div>
+        <div class="artist text-md w-full overflow-hdden" style:font-style="italic" style:margin-bottom="-4px">{song.artist}</div>
+        <div class="album text-sm text-gray-600 w-full overflow-hidden" style:font-style="italic">{song.album}</div>
+    </div>
+</div>
