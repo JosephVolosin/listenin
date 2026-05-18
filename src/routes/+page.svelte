@@ -3,6 +3,7 @@
 	import Sidebar from "../components/Sidebar.svelte";
     import Song from "../components/Song.svelte";
     import { type SongFull } from "../types.ts";
+    import { MusicBrainz } from "../util/api.ts";
 
     const songWidth = 335;
     const songHeight = 75;
@@ -21,6 +22,11 @@
     }
 
     let drawSidebar = $state(true);  // TODO: This should hide if the window becomes too small
+    
+    function getSong() {
+        const api = new MusicBrainz();
+        api.getSong("Goodbye Stranger", "Supertramp");
+    }
 </script>
 
 <Scrobbler bind:this={scrobbler}/>
@@ -28,7 +34,6 @@
     class="grid grid-container"
     style:min-height="100vh"
 >
-
     <div
         class="friends bg-blue-100"
         style:height=94vh
@@ -129,7 +134,7 @@
     >
         <button
             class="btn flex justify-center items-center"
-            onclick={() => scrobbler.show()}
+            onclick={() => getSong()}
         >
             Scrobble
         </button>

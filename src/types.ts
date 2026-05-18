@@ -3,3 +3,9 @@ export type SongFull = {
     artist: string;
     name: string;
 };
+
+export type SongDB = SongFull & { musicbrainzId: number }
+
+export type Recording = {
+    "first-release-date": string;
+}
