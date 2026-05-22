@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { SongFull } from "../types";
 	import Song from "./Song.svelte";
+    
+    let { api } = $props();
 
-    const songWidth: number = 300;
-    const songHeight: number = 75;
+    const songWidth: string = "100%";
+    const songHeight: string = "75px";
 
     let exampleSong1: SongFull = {
-        name: "Faron Young",
+        name: "Appetite",
         artist: "Prefab Sprout",
         album: "Steve McQueen"
     }
@@ -22,8 +24,10 @@
     class="history flex flex-col gap-2 mt-2 items-center w-full"
 >
     <div class="font-bold text-cener">History</div>
-    <Song song={exampleSong1} height={songHeight} width={songWidth} />
-    <Song song={exampleSong2} height={songHeight} width={songWidth}  />
+    <div class="m-2">
+        <Song song={exampleSong1} height={songHeight} width={songWidth} {api} fetchArt={true} />
+        <Song song={exampleSong2} height={songHeight} width={songWidth} {api} fetchArt={true} />
+    </div>
 
     <div class="join w-full mt-auto mb-2 rounded-lg justify-center">
         <input
