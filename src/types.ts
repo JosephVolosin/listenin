@@ -41,3 +41,5 @@ export type User = {
   username: string;
   lastPlayed: SongFull;
 };
+
+export type ActionResultTypes = 'success' | 'failure' | 'redirect' | 'error';

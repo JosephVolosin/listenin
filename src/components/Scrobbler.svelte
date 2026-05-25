@@ -36,8 +36,6 @@
             hide()
         }
     }
-
-    $effect(() => { console.log(isVisible) })
 </script>
 
 <!-- TODO: Add 'X' to modal -->
