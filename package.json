@@ -38,6 +38,8 @@
 		"vite": "^8.0.7"
 	},
 	"dependencies": {
+		"@supabase/ssr": "^0.10.3",
+		"@supabase/supabase-js": "^2.106.2",
 		"daisyui": "^5.5.19",
 		"luxon": "^3.7.2",
 		"ts-md5": "^2.0.1"

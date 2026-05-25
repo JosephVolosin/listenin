@@ -62,7 +62,6 @@
         }
         return new Promise<string | null>((resolve) => resolve(null));
     }
-    $effect(() => console.log(`isLoading = ${isLoading}`));
 </script>
 
 <div

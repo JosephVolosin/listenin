@@ -1,13 +1,18 @@
 <script lang="ts">
 	import Friend from "../components/Friend.svelte";
     import Scrobbler from "../components/Scrobbler.svelte";
+    import UserLogin from "../components/UserLogin.svelte";
 	import Sidebar from "../components/Sidebar.svelte";
-    import { type User } from "../types.ts";
+    import { type ActionResultTypes, type User } from "../types.ts";
     import { MusicAPI } from "../util/api.ts";
+
+    let { data } = $props();
+    let { claims, user, supabase } = $derived(data);
 
     const musicAPI = new MusicAPI();
 
     let scrobbler: Scrobbler;
+    let userLogin: UserLogin;
     let drawSidebar = $state(true);  // TODO: This should hide if the window becomes too small
     let testUser: User = {
         username: "testguy",
@@ -17,9 +22,23 @@
             album: "Gaucho"
         }
     };
+    let errorAlert: HTMLDivElement;
+    let error: string = $state('');
+
+    function handleSendAlert(type: ActionResultTypes, message: string) {
+        if (type === 'failure') {
+            errorAlert.style.display = '';
+            error = message;
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+                error = '';
+            }, 5000);
+        }
+    }
 </script>
 
-<Scrobbler bind:this={scrobbler}/>
+<UserLogin sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={userLogin} />
+<Scrobbler bind:this={scrobbler} />
 <div
     class="grid grid-container"
     style:min-height="100vh"
@@ -28,6 +47,18 @@
         class="friends bg-blue-100"
         style:height=94vh
     >
+        <div role="alert" class="alert alert-error" style:display='none' bind:this={errorAlert}>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{error}</span>
+        </div>
+    </div>
+    <div
+        class="friends bg-blue-100"
+        style:height=94vh
+    >
+
         <div class="grid grid-cols-4 grid-rows-2 text-center h-full">
             <Friend
                 api={musicAPI}
@@ -46,12 +77,22 @@
         class="footer border-t flex bottom-0 bg-blue-200 w-full items-center justify-center"
         style:height=6vh
     >
-        <button
-            class="btn flex justify-center items-center"
-            onclick={() => scrobbler.show()}
-        >
-            Scrobble
-        </button>
+        {#if user !== null}
+            <span class="font-bold absolute left-0 m-2">{user.user_metadata["username"]}</span>
+            <button
+                class="btn flex justify-center items-center"
+                onclick={() => scrobbler.show()}
+            >
+                Scrobble
+            </button>
+        {:else}
+            <button
+                class="btn flex justify-center items-center"
+                onclick={() => userLogin.show()}
+            >
+                Login
+            </button>
+        {/if}
     </div>
 </div>
 
