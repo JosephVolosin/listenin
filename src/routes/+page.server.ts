@@ -1,7 +1,7 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { supabase } from '../util/supabase';
 import type { PageServerLoad } from './$types';
-import type { FriendMapEntry } from '../types';
+import type { FriendMapEntry, Scrobble } from '../types';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
   const { data, error } = await supabase.auth.getClaims();
@@ -10,8 +10,10 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
   // Retrieve user's friends
   // TODO: Should this be here or in the UI?
   let userFriends: string[] = [];
+  let userScrobbles: Scrobble[] = [];
   if (userResponse.data.user) {
     const currentUserName = userResponse.data.user.user_metadata["username"];
+    // Gather friends data
     const friendsResponse = await supabase
       .from("friends")
       .select("*")
@@ -31,10 +33,21 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
       );
       userFriends = friendsList;
     }
+    // Gather personal history
+    const scrobblesResponse = await supabase
+      .from("scrobbles")
+      .select("album, artist, name:song, timestamp")
+      .eq("user", currentUserName);
+    if (scrobblesResponse.data) {
+      userScrobbles = scrobblesResponse.data;
+    } else {
+      console.error(`Unable to retrieve user's history, ${scrobblesResponse.error.message}`);
+    }
   }
   return {
     url: url.origin,
     user: userResponse.data.user,
+    scrobbles: userScrobbles,
     friends: userFriends
   }
 }
