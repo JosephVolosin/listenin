@@ -9,7 +9,7 @@
 	import { enhance } from "$app/forms";
 
     let { data } = $props();
-    let { claims, user, supabase } = $derived(data);
+    let { claims, user, supabase, friends } = $derived(data);
 
     const musicAPI = new MusicAPI();
 
@@ -95,10 +95,12 @@
     >
 
         <div class="grid grid-cols-4 grid-rows-2 text-center h-full">
-            <Friend
-                api={musicAPI}
-                user={testUser}
-            />
+            {#each friends as friend (friend)}
+                <Friend
+                    api={musicAPI}
+                    username={friend}
+                />
+            {/each}
         </div>
     </div>
     {#if drawSidebar}

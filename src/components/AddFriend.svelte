@@ -5,7 +5,7 @@
 
     let width = $state(400);
     let height = $state(145);
-    let isVisible = $state(true);
+    let isVisible = $state(false);
     let isLoading = $state(false);
 
     let { currentUser, sendAlert } = $props();

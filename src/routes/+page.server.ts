@@ -1,13 +1,41 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { supabase } from '../util/supabase';
 import type { PageServerLoad } from './$types';
+import type { FriendMapEntry } from '../types';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
   const { data, error } = await supabase.auth.getClaims();
   const userResponse = await supabase.auth.getUser();
+
+  // Retrieve user's friends
+  // TODO: Should this be here or in the UI?
+  let userFriends: string[] = [];
+  if (userResponse.data.user) {
+    const currentUserName = userResponse.data.user.user_metadata["username"];
+    const friendsResponse = await supabase
+      .from("friends")
+      .select("*")
+      .or(`friendA.eq.${currentUserName},friendB.eq.${currentUserName}`);
+    if (friendsResponse.data) {
+      // Generate a friends list from the returned data and push it into the original list
+      // TODO: Do we really need to declare the initial list?
+      const friendsList = friendsResponse.data.reduce(
+        (friendsList: string[], currentFriendship: FriendMapEntry) => {
+          if (currentFriendship.friendA !== currentUserName) {
+            friendsList.push(currentFriendship.friendA);
+          } else {
+            friendsList.push(currentFriendship.friendB);
+          }
+          return friendsList
+        }, []
+      );
+      userFriends = friendsList;
+    }
+  }
   return {
     url: url.origin,
-    user: userResponse.data.user
+    user: userResponse.data.user,
+    friends: userFriends
   }
 }
 
