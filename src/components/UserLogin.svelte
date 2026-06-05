@@ -10,6 +10,7 @@
     let left = $state(200);
     let top = $state(200);
     let isVisible = $state(false);
+    let isLoading = $state(false);
     
     // Handles tracking whether we're registering or logging in
     let formName = $state("login");
@@ -70,15 +71,18 @@
     }
 
     const handleSubmit: SubmitFunction = () => {
+        isLoading = true;
         return async ({ result, update }) => {
             if (result.type === 'error') {
                 sendAlert(result.type, result?.error ?? 'Unknown error');
             } else if (result.type === 'failure') {
                 sendAlert(result.type, result.data?.error ?? 'Unknown error');
             } else if (result.type === 'success') {
-                sendAlert(result.type, 'Success!');
+                sendAlert(result.type, result?.data?.message ?? "Welcome!");
             }
+            isLoading = false;
             update()
+            hide();
         }
     }
 
@@ -201,7 +205,6 @@
                     type="submit"
                     disabled={userIsRegistering ? !registrationIsValid : !loginIsValid}
                     formaction={actionURI}
-                    onclick={() => hide()}
                 >
                     {#if userIsRegistering}
                         Register
@@ -213,26 +216,30 @@
         </form>
         <!-- Swap between registration and login -->
         <div class="join flex w-full m-4">
-            <!-- TODO: a11y -->
-            <!-- svelte-ignore a11y_interactive_supports_focus -->
-            <!-- svelte-ignore a11y_click_events_have_key_events -->
-            <buton
-                class={loginButtonClass}
-                onclick={onDoLogin}
-                role="button"
-            >
-                Login
-            </buton>
-            <!-- TODO: a11y -->
-            <!-- svelte-ignore a11y_interactive_supports_focus -->
-            <!-- svelte-ignore a11y_click_events_have_key_events -->
-            <buton
-                class={registerButtonClass}
-                onclick={onDoRegister}
-                role="button"
-            >
-                Register
-            </buton>
+            {#if !isLoading}
+                <!-- TODO: a11y -->
+                <!-- svelte-ignore a11y_interactive_supports_focus -->
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <buton
+                    class={loginButtonClass}
+                    onclick={onDoLogin}
+                    role="button"
+                >
+                    Login
+                </buton>
+                <!-- TODO: a11y -->
+                <!-- svelte-ignore a11y_interactive_supports_focus -->
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <buton
+                    class={registerButtonClass}
+                    onclick={onDoRegister}
+                    role="button"
+                >
+                    Register
+                </buton>
+            {:else}
+                <span class="loading loading-dots loading-sm mt-2"></span>
+            {/if}
         </div>
     </div>
 </div>
