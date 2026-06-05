@@ -39,6 +39,18 @@ export const actions: Actions = {
 
     return fail(400, { error: 'Login failed' });
   },
+  logout: async ({ locals }) => {
+    const result = await locals.supabase.auth.signOut();
+    if (result.error) {
+      return fail(400, { error: { 
+        name: result.error.name,
+        message: result.error.message,
+        code: result.error.code,
+        status: result.error.status
+      }});
+    }
+    return { success: true, message: "Logged out successfully." };
+  },
   register: async ({ request }) => {
     const data = await request.formData();
 

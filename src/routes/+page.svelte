@@ -5,7 +5,7 @@
 	import Sidebar from "../components/Sidebar.svelte";
     import { type ActionResultTypes, type User } from "../types.ts";
     import { MusicAPI } from "../util/api.ts";
-	import AddFriend from "../components/AddFriend.svelte";
+	import { enhance } from "$app/forms";
 
     let { data } = $props();
     let { claims, user, supabase } = $derived(data);
@@ -27,6 +27,17 @@
     let error: string = $state('');
     let successAlert: HTMLDivElement;
     let success: string = $state('');
+
+    const handleLogout: SubmitFunction = () => {
+        return async ({ update, result }) => {
+            update()
+            if (result.type === 'success') {
+                handleSendAlert(result.type, result?.data?.message ?? "Logged out successfully.");
+            } else {
+                handleSendAlert(result.type, result?.error ?? 'Unknown error');
+            }
+        }
+    }
 
     function handleSendAlert(type: ActionResultTypes, message: string) {
         if (type === 'failure') {
@@ -101,6 +112,13 @@
             >
                 Scrobble
             </button>
+            <form method="post" action="?/logout" use:enhance={handleLogout}>
+                <button
+                    class="btn flex justify-center items-center"
+                >
+                    Logout
+                </button> 
+            </form>
         {:else}
             <button
                 class="btn flex justify-center items-center"
