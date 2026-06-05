@@ -12,6 +12,25 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 }
 
 export const actions: Actions = {
+  addFriend: async ({ request, locals }) => {
+    const formData = await request.formData();
+    const currentUser = formData.get("user")?.toString();
+    const friendName = formData.get("friend")?.toString();
+
+    if (currentUser !== null && friendName !== null) {
+      const { error } = await locals.supabase
+        .from("friends")
+        .insert({
+          friendA: currentUser,
+          friendB: friendName
+      });
+      if (error) {
+        return fail(400, { error: error.message })
+      }
+      return { success: true, message: `Successfully added '${friendName}'!` }
+    }
+    return fail(400, { error: 'Invalid friend name, or no user is logged in.'})
+  },
   login: async ({ request, locals }) => {
     const data = await request.formData();
     

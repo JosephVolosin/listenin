@@ -65,7 +65,7 @@
     }
 </script>
 
-<AddFriend bind:this={addFriend} />
+<AddFriend currentUser={user?.user_metadata["username"]} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={addFriend} />
 <UserLogin sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={userLogin} />
 <Scrobbler bind:this={scrobbler} />
 <div
