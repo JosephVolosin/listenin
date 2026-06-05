@@ -43,3 +43,8 @@ export type User = {
 };
 
 export type ActionResultTypes = 'success' | 'failure' | 'redirect' | 'error';
+
+export type FriendMapEntry = {
+    friendA: string,
+    friendB: string
+};

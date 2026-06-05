@@ -1,4 +1,5 @@
 <script lang="ts">
+    import AddFriend from '../components/AddFriend.svelte';
 	import Friend from "../components/Friend.svelte";
     import Scrobbler from "../components/Scrobbler.svelte";
     import UserLogin from "../components/UserLogin.svelte";
@@ -8,12 +9,14 @@
 	import { enhance } from "$app/forms";
 
     let { data } = $props();
-    let { claims, user, supabase } = $derived(data);
+    let { claims, user, supabase, friends } = $derived(data);
 
     const musicAPI = new MusicAPI();
 
     let scrobbler: Scrobbler;
     let userLogin: UserLogin;
+    let addFriend: AddFriend;
+
     let drawSidebar = $state(true);  // TODO: This should hide if the window becomes too small
     let testUser: User = {
         username: "testguy",
@@ -56,8 +59,13 @@
             }, 5000);
         }
     }
+
+    function handleAddFriend() {
+        addFriend.show();
+    }
 </script>
 
+<AddFriend currentUser={user?.user_metadata["username"]} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={addFriend} />
 <UserLogin sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={userLogin} />
 <Scrobbler bind:this={scrobbler} />
 <div
@@ -87,10 +95,12 @@
     >
 
         <div class="grid grid-cols-4 grid-rows-2 text-center h-full">
-            <Friend
-                api={musicAPI}
-                user={testUser}
-            />
+            {#each friends as friend (friend)}
+                <Friend
+                    api={musicAPI}
+                    username={friend}
+                />
+            {/each}
         </div>
     </div>
     {#if drawSidebar}
@@ -106,12 +116,20 @@
     >
         {#if user !== null}
             <span class="font-bold absolute left-0 m-2">{user.user_metadata["username"]}</span>
-            <button
-                class="btn flex justify-center items-center"
-                onclick={() => scrobbler.show()}
-            >
-                Scrobble
-            </button>
+            <div class="flex">
+                <button
+                    class="btn flex justify-center items-center"
+                    onclick={() => scrobbler.show()}
+                >
+                    Scrobble
+                </button>
+                <button
+                    class="btn flex justify-center items-center"
+                    onclick={() => handleAddFriend()}
+                >
+                    Add Friend
+                </button>
+            </div>
             <form method="post" action="?/logout" use:enhance={handleLogout}>
                 <button
                     class="btn flex justify-center items-center"
