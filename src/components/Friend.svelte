@@ -1,10 +1,16 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import Song from "./Song.svelte";
 
     let { api, username } = $props();
     
     const songWidth = "335px";
     const songHeight = "75px";
+
+    onMount(() => {
+        // Lookup user details
+        // TODO
+    });
 
 </script>
 
