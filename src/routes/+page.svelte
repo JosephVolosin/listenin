@@ -5,6 +5,7 @@
 	import Sidebar from "../components/Sidebar.svelte";
     import { type ActionResultTypes, type User } from "../types.ts";
     import { MusicAPI } from "../util/api.ts";
+	import AddFriend from "../components/AddFriend.svelte";
 
     let { data } = $props();
     let { claims, user, supabase } = $derived(data);
@@ -24,6 +25,8 @@
     };
     let errorAlert: HTMLDivElement;
     let error: string = $state('');
+    let successAlert: HTMLDivElement;
+    let success: string = $state('');
 
     function handleSendAlert(type: ActionResultTypes, message: string) {
         if (type === 'failure') {
@@ -32,6 +35,13 @@
             setTimeout(() => {
                 errorAlert.style.display = 'none';
                 error = '';
+            }, 5000);
+        } else if (type === 'success') {
+            successAlert.style.display = '';
+            success = message;
+            setTimeout(() => {
+                successAlert.style.display = 'none';
+                success = '';
             }, 5000);
         }
     }
@@ -47,7 +57,13 @@
         class="friends bg-blue-100"
         style:height=94vh
     >
-        <div role="alert" class="alert alert-error" style:display='none' bind:this={errorAlert}>
+        <div role="alert" class="alert alert-success absolute h-14 w-full" style:display='none' bind:this={successAlert}>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{success}</span>
+        </div>
+        <div role="alert" class="alert alert-error absolute h-14 w-full" style:display='none' bind:this={errorAlert}>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
