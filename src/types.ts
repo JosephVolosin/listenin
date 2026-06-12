@@ -1,7 +1,13 @@
+// TODO: Condense types
+
 export type SongFull = {
     album: string;
     artist: string;
     name: string;
+};
+
+export type Scrobble = SongFull & {
+    timestamp: Date;
 };
 
 export type SongDB = SongFull & { musicbrainzIds: string[] }
@@ -39,7 +45,7 @@ export type Recording = {
 
 export type User = {
   username: string;
-  lastPlayed: SongFull;
+  scrobbles?: Scrobble[];
 };
 
 export type ActionResultTypes = 'success' | 'failure' | 'redirect' | 'error';

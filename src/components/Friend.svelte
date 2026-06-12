@@ -1,25 +1,45 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import Song from "./Song.svelte";
+	import type { Scrobble, SongFull, User } from "../types";
 
     let { api, username } = $props();
     
     const songWidth = "335px";
     const songHeight = "75px";
 
-    onMount(() => {
+    let userData: User = $state({ username });
+    let lastPlayed: Scrobble | null = $state(null);
+
+    onMount(async () => {
         // Lookup user details
-        // TODO
+        // TODO: Handle failures
+        const userResponse = await fetch(`/api/user/${username}`);
+        const userResponseJSON: User[] = await userResponse.json();
+        if (userResponseJSON.length > 0) {
+            userData = userResponseJSON.pop();
+        }
     });
+
+    $effect(() => {
+        if (userData.scrobbles) {
+            // userData.scrobbles.sort(
+            //     (songA: Scrobble, songB: Scrobble) => {
+            //         return songA.timestamp.getUTCMilliseconds() - songB.timestamp.getUTCMilliseconds()
+            //     }
+            // );
+            lastPlayed = userData.scrobbles.at(0) ?? null;
+        }
+    })
 
 </script>
 
 <div class="friend grid grid-cols-1 grid-rows-2 bottom-2">
     <div>{username}</div>
-    <!-- <div class="flex justify-enter mt-auto mb-2">
-        {#if user.lastPlayed}
+    <div class="flex justify-enter mt-auto mb-2">
+        {#if lastPlayed !== null}
             <Song
-                song={user.lastPlayed}
+                song={lastPlayed}
                 width={songWidth}
                 height={songHeight}
                 api={api}
@@ -28,7 +48,7 @@
         {:else}
             <div>No recent plays.</div>
         {/if}
-    </div> -->
+    </div>
 </div>
 
 <style>
