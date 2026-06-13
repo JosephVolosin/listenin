@@ -65,9 +65,9 @@
 </script>
 
 <div
-    style:width={width}
+    style:min-width={width}
     style:height={height}
-    class="rounded-lg bg-blue-300 inline-flex border-black border"
+    class="rounded-lg bg-blue-300 inline-flex border-black border ml-2 mr-2"
 >
     <div
         class="album-art border-r border-r-black h-full flex justify-center"

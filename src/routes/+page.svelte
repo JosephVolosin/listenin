@@ -9,7 +9,7 @@
 	import { enhance } from "$app/forms";
 
     let { data } = $props();
-    let { claims, user, supabase, friends } = $derived(data);
+    let { claims, user, supabase, friends, scrobbles } = $derived(data);
 
     const musicAPI = new MusicAPI();
 
@@ -107,7 +107,7 @@
         <div
             class="sidebar flex right-0 bg-blue-200"
         >
-            <Sidebar api={musicAPI}/>
+            <Sidebar {scrobbles} api={musicAPI}/>
         </div>
     {/if}
     <div
