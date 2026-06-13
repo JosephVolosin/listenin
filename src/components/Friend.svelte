@@ -23,12 +23,14 @@
 
     $effect(() => {
         if (userData.scrobbles) {
-            // userData.scrobbles.sort(
-            //     (songA: Scrobble, songB: Scrobble) => {
-            //         return songA.timestamp.getUTCMilliseconds() - songB.timestamp.getUTCMilliseconds()
-            //     }
-            // );
-            lastPlayed = userData.scrobbles.at(0) ?? null;
+            const sortedScrobbles = userData.scrobbles.sort(
+                (songA: Scrobble, songB: Scrobble) => {
+                    const songADate = new Date(songA.timestamp);
+                    const songBDate = new Date(songB.timestamp);
+                    return songBDate.getTime() - songADate.getTime();
+                }
+            );
+            lastPlayed = sortedScrobbles.at(0) ?? null;
         }
     })
 
@@ -36,7 +38,7 @@
 
 <div class="friend grid grid-cols-1 grid-rows-2 bottom-2">
     <div>{username}</div>
-    <div class="flex justify-enter mt-auto mb-2">
+    <div class="flex justify-center mt-auto mb-2">
         {#if lastPlayed !== null}
             <Song
                 song={lastPlayed}

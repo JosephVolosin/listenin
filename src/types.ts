@@ -7,7 +7,7 @@ export type SongFull = {
 };
 
 export type Scrobble = SongFull & {
-    timestamp: Date;
+    timestamp: string;  // TODO: Supabase returns timestamptz as string, maybe auto-convert on receipt?
 };
 
 export type SongDB = SongFull & { musicbrainzIds: string[] }

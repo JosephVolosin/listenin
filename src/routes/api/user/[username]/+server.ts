@@ -8,7 +8,7 @@ export async function GET({ params, locals }) {
         scrobbles (
           album,
           artist,
-          song,
+          name:song,
           timestamp
         )
       `)

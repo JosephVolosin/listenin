@@ -4,7 +4,7 @@
     
     let { api, scrobbles } = $props();
 
-    const songWidth: string = "100%";
+    const songWidth: string = "95%";
     const songHeight: string = "75px";
 </script>
 
@@ -12,7 +12,7 @@
     class="history flex flex-col gap-2 mt-2 items-center w-full"
 >
     <div class="font-bold text-cener">History</div>
-    <div class="m-2">
+    <div class="m-2 w-full">
         {#each scrobbles as scrobble (scrobble)}
             <Song song={scrobble} height={songHeight} width={songWidth} {api} fetchArt={true} />
         {/each}
