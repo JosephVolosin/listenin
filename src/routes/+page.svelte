@@ -7,6 +7,7 @@
     import { type ActionResultTypes, type User } from "../types.ts";
     import { MusicAPI } from "../util/api.ts";
 	import { enhance } from "$app/forms";
+	import type { SubmitFunction } from '@sveltejs/kit';
 
     let { data } = $props();
     let { claims, user, supabase, friends, scrobbles } = $derived(data);
@@ -18,14 +19,6 @@
     let addFriend: AddFriend;
 
     let drawSidebar = $state(true);  // TODO: This should hide if the window becomes too small
-    let testUser: User = {
-        username: "testguy",
-        lastPlayed: {
-            name: "Hey Nineteen",
-            artist: "Steely Dan",
-            album: "Gaucho"
-        }
-    };
     let errorAlert: HTMLDivElement;
     let error: string = $state('');
     let successAlert: HTMLDivElement;
@@ -67,7 +60,7 @@
 
 <AddFriend currentUser={user?.user_metadata["username"]} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={addFriend} />
 <UserLogin sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={userLogin} />
-<Scrobbler bind:this={scrobbler} />
+<Scrobbler currentUser={user?.user_metadata["username"]} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={scrobbler} />
 <div
     class="grid grid-container"
     style:min-height="100vh"

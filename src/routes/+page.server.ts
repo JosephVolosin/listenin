@@ -140,5 +140,34 @@ export const actions: Actions = {
     }
 
     return fail(400, { error: 'Sign-up failed' });
+  },
+  scrobble: async (event) => {
+    console.log(event);
+    const { request, locals } = event;
+    const data = await request.formData();
+    const song = data.get('song')?.toString();
+    const artist = data.get('artist')?.toString();
+    const album = data.get('album')?.toString();
+    const username = data.get('username')?.toString();
+
+    if (
+      song !== undefined &&
+      artist !== undefined &&
+      album !== undefined
+    ) {
+      const { error } = await locals.supabase
+        .from('scrobbles')
+        .insert({
+          user: username,
+          album,
+          artist,
+          song
+        });
+      if (error) {
+        return fail(400, { error: error.message });
+      }
+      return { success: true, message: `Successfully added '${song}' (${album} by ${artist})`};
+    }
+    return fail(400, { error: 'Invalid request' });
   }
 };

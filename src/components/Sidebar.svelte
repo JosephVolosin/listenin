@@ -1,11 +1,24 @@
 <script lang="ts">
-	import type { SongFull } from "../types";
+	import type { Scrobble } from "../types";
 	import Song from "./Song.svelte";
     
     let { api, scrobbles } = $props();
 
     const songWidth: string = "95%";
     const songHeight: string = "75px";
+
+    // TODO: Condense this and do it on initial retrieval
+    $effect(() => {
+        if (scrobbles) {
+            scrobbles.sort(
+                (songA: Scrobble, songB: Scrobble) => {
+                    const songADate = new Date(songA.timestamp);
+                    const songBDate = new Date(songB.timestamp);
+                    return songBDate.getTime() - songADate.getTime();
+                }
+            );
+        }
+    })
 </script>
 
 <div
