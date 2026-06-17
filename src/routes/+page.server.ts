@@ -11,37 +11,39 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
   // TODO: Should this be here or in the UI?
   let userFriends: string[] = [];
   let userScrobbles: Scrobble[] = [];
-  if (userResponse.data.user) {
-    const currentUserName = userResponse.data.user.user_metadata["username"];
-    // Gather friends data
-    const friendsResponse = await supabase
-      .from("friends")
-      .select("*")
-      .or(`friendA.eq.${currentUserName},friendB.eq.${currentUserName}`);
-    if (friendsResponse.data) {
-      // Generate a friends list from the returned data and push it into the original list
-      // TODO: Do we really need to declare the initial list?
-      const friendsList = friendsResponse.data.reduce(
-        (friendsList: string[], currentFriendship: FriendMapEntry) => {
-          if (currentFriendship.friendA !== currentUserName) {
-            friendsList.push(currentFriendship.friendA);
-          } else {
-            friendsList.push(currentFriendship.friendB);
-          }
-          return friendsList
-        }, []
-      );
-      userFriends = friendsList;
-    }
-    // Gather personal history
-    const scrobblesResponse = await supabase
-      .from("scrobbles")
-      .select("album, artist, name:song, timestamp")
-      .eq("user", currentUserName);
-    if (scrobblesResponse.data) {
-      userScrobbles = scrobblesResponse.data;
-    } else {
-      console.error(`Unable to retrieve user's history, ${scrobblesResponse.error.message}`);
+  const { data: { user: currentUser } } = userResponse;
+  if (currentUser !== null && currentUser.id) {
+    if (currentUser.id !== null) {
+      // Gather friends data
+      const friendsResponse = await supabase
+        .from("friends")
+        .select("*")
+        .or(`friend_a.eq.${currentUser.id},friend_b.eq.${currentUser.id}`);
+      if (friendsResponse.data) {
+        // Generate a friends list from the returned data and push it into the original list
+        // TODO: Do we really need to declare the initial list?
+        const friendsList = friendsResponse.data.reduce(
+          (friendsList: string[], currentFriendship: FriendMapEntry) => {
+            if (currentFriendship.friend_a !== currentUser.id) {
+              friendsList.push(currentFriendship.friend_a);
+            } else {
+              friendsList.push(currentFriendship.friend_b);
+            }
+            return friendsList
+          }, []
+        );
+        userFriends = friendsList;
+      }
+      // Gather personal history
+      const scrobblesResponse = await supabase
+        .from("scrobbles")
+        .select("album, artist, name:song, timestamp")
+        .eq("user_id", currentUser.id);
+      if (scrobblesResponse.data) {
+        userScrobbles = scrobblesResponse.data;
+      } else {
+        console.error(`Unable to retrieve user's history, ${scrobblesResponse.error.message}`);
+      }
     }
   }
   return {
@@ -55,18 +57,38 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 export const actions: Actions = {
   addFriend: async ({ request, locals }) => {
     const formData = await request.formData();
-    const currentUser = formData.get("user")?.toString();
+    const currentUser = formData.get("user_id")?.toString();
     const friendName = formData.get("friend")?.toString();
 
     if (currentUser !== null && friendName !== null) {
-      const { error } = await locals.supabase
+      // 1. Attempt to retrieve the friend's user ID
+      const { error: idLookupError, data } = await locals.supabase
+        .from("profiles")
+        .select("id")
+        .eq("username", friendName);
+
+      // Check for error or no response
+      if (idLookupError) {
+        return fail(400, { error: idLookupError.message });
+      } else if (data.length === 0) {
+        return fail(400, { error: `No user named '${friendName}' exists.`});
+      }
+
+      // Pull id out, fail if none was returned
+      const { id: friendUserId } = data.pop() ?? { id: null };
+      if (friendUserId === null) {
+        return fail(500, { error: `Could not locate '${friendName}'s user ID.`});
+      }
+
+      // 2. Create the friend linkage
+      const { error: friendInsertError } = await locals.supabase
         .from("friends")
         .insert({
-          friendA: currentUser,
-          friendB: friendName
+          friend_a: currentUser,
+          friend_b: friendUserId
       });
-      if (error) {
-        return fail(400, { error: error.message })
+      if (friendInsertError) {
+        return fail(400, { error: friendInsertError.message })
       }
       return { success: true, message: `Successfully added '${friendName}'!` }
     }
@@ -94,7 +116,7 @@ export const actions: Actions = {
           status: loginResponse.error.status,
         }})
       }
-      return { success: true, message: `Welcome ${loginResponse.data.user.user_metadata["username"]}!` };
+      return { success: true, message: `Welcome ${loginResponse.data.user.user_metadata["username"]}!` };  // TODO: username is a column, but not supported in the Supabase type?
     }
 
     return fail(400, { error: 'Login failed' });
@@ -142,13 +164,12 @@ export const actions: Actions = {
     return fail(400, { error: 'Sign-up failed' });
   },
   scrobble: async (event) => {
-    console.log(event);
     const { request, locals } = event;
     const data = await request.formData();
     const song = data.get('song')?.toString();
     const artist = data.get('artist')?.toString();
     const album = data.get('album')?.toString();
-    const username = data.get('username')?.toString();
+    const user_id = data.get('user_id')?.toString();
 
     if (
       song !== undefined &&
@@ -158,7 +179,7 @@ export const actions: Actions = {
       const { error } = await locals.supabase
         .from('scrobbles')
         .insert({
-          user: username,
+          user_id,
           album,
           artist,
           song

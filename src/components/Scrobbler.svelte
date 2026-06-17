@@ -26,7 +26,7 @@
 
     const handleScrobble: SubmitFunction = ({ formData }) => {
         isLoading = true;
-        formData.append('username', currentUser);
+        formData.append('user_id', currentUser);
         return async ({ result, update }) => {
             if (result.type === 'error') {
                 sendAlert(result.type, result?.error ?? 'Unknown error');

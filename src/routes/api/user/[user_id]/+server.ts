@@ -12,7 +12,7 @@ export async function GET({ params, locals }) {
           timestamp
         )
       `)
-      .eq("username", params.username)
+      .eq("id", params.user_id)
     if (userResponse.error !== null) {
       error(400, userResponse.error);
     }

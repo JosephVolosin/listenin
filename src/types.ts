@@ -45,12 +45,13 @@ export type Recording = {
 
 export type User = {
   username: string;
+  user_id: string;
   scrobbles?: Scrobble[];
 };
 
 export type ActionResultTypes = 'success' | 'failure' | 'redirect' | 'error';
 
 export type FriendMapEntry = {
-    friendA: string,
-    friendB: string
+    friend_a: string,
+    friend_b: string
 };

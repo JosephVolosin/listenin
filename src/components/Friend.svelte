@@ -3,21 +3,21 @@
 	import Song from "./Song.svelte";
 	import type { Scrobble, SongFull, User } from "../types";
 
-    let { api, username } = $props();
+    let { api, userId } = $props();
     
     const songWidth = "335px";
     const songHeight = "75px";
 
-    let userData: User = $state({ username });
+    let userData: User = $state({ username: '', scrobbles: [], user_id: userId });
     let lastPlayed: Scrobble | null = $state(null);
 
     onMount(async () => {
         // Lookup user details
         // TODO: Handle failures
-        const userResponse = await fetch(`/api/user/${username}`);
+        const userResponse = await fetch(`/api/user/${userId}`);
         const userResponseJSON: User[] = await userResponse.json();
         if (userResponseJSON.length > 0) {
-            userData = userResponseJSON.pop();
+            userData = userResponseJSON.pop() ?? { username: '', scrobbles: [], user_id: userId };  // TODO: What do we do when a friendship is broken like this?
         }
     });
 
@@ -37,7 +37,7 @@
 </script>
 
 <div class="friend grid grid-cols-1 grid-rows-2 bottom-2">
-    <div>{username}</div>
+    <div>{userData.username}</div>
     <div class="flex justify-center mt-auto mb-2">
         {#if lastPlayed !== null}
             <Song
