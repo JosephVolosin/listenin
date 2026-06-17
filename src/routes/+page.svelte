@@ -12,6 +12,8 @@
     let { data } = $props();
     let { claims, user, supabase, friends, scrobbles } = $derived(data);
 
+    $effect(() => console.log(user));
+
     const musicAPI = new MusicAPI();
 
     let scrobbler: Scrobbler;
@@ -58,9 +60,9 @@
     }
 </script>
 
-<AddFriend currentUser={user?.user_metadata["username"]} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={addFriend} />
+<AddFriend currentUser={user?.id} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={addFriend} />
 <UserLogin sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={userLogin} />
-<Scrobbler currentUser={user?.user_metadata["username"]} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={scrobbler} />
+<Scrobbler currentUser={user?.id} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={scrobbler} />
 <div
     class="grid grid-container"
     style:min-height="100vh"
@@ -91,7 +93,7 @@
             {#each friends as friend (friend)}
                 <Friend
                     api={musicAPI}
-                    username={friend}
+                    userId={friend}
                 />
             {/each}
         </div>
@@ -108,7 +110,7 @@
         style:height=6vh
     >
         {#if user !== null}
-            <span class="font-bold absolute left-0 m-2">{user.user_metadata["username"]}</span>
+            <span class="font-bold absolute left-0 m-2">{user.user_metadata["username"]}</span> <!-- TODO: username is a column but the Supabase type doesn't support it? -->
             <div class="flex">
                 <button
                     class="btn flex justify-center items-center"
