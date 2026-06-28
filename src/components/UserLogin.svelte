@@ -4,9 +4,12 @@
 
     let { sendAlert } = $props();
 
+    const loginHeight = 265;
+    const registerHeight = 300;
+
     // Modal properties
     let width = $state(400);
-    let height = $state(265);
+    let height = $state(loginHeight);
     let left = $state(200);
     let top = $state(200);
     let isVisible = $state(false);
@@ -16,8 +19,8 @@
     let formName = $state("login");
     const actionURI = $derived(`?/${formName}`);
     let userIsRegistering = $state(false);
-    let loginButtonClass = $state("btn btn-xs btn-active");
-    let registerButtonClass = $state("btn btn-xs");
+    let loginButtonClass = $state("btn btn-xs btn-active bg-listenin-primary-light");
+    let registerButtonClass = $state("btn btn-xs bg-listenin-primary");
 
     // Input fields & validation
     let passwordField: string = $state('');
@@ -60,14 +63,16 @@
 
     function onDoLogin() {
         userIsRegistering = false;
-        loginButtonClass = "btn btn-xs btn-active"
-        registerButtonClass = "btn btn-xs"
+        loginButtonClass = "btn btn-xs btn-active bg-listenin-primary-light"
+        registerButtonClass = "btn btn-xs bg-listenin-primary"
+        height = loginHeight;
     }
 
     function onDoRegister() {
         userIsRegistering = true;
-        loginButtonClass = "btn btn-xs"
-        registerButtonClass = "btn btn-xs btn-active"
+        loginButtonClass = "btn btn-xs bg-listenin-primary"
+        registerButtonClass = "btn btn-xs btn-active bg-listenin-primary-light"
+        height = registerHeight;
     }
 
     const handleSubmit: SubmitFunction = () => {
@@ -99,7 +104,7 @@
 <!-- TODO: fix a11y thing below -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
-    class="p-2 gap-3 z-999999 bg-listenin-primary rounded-lg cursor-move"
+    class="p-2 gap-3 z-999999 bg-listenin-primary-dark rounded-lg cursor-move"
     style:user-select=none
     style:position=absolute
     style:left={left}px
@@ -123,7 +128,7 @@
         >
             <!-- E-mail input -->
             <div class="m-2">
-                <label class="input validator w-full">
+                <label class="input validator w-full bg-listenin-primary-light">
                     <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g
                             stroke-linejoin="round"
@@ -136,13 +141,13 @@
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                         </g>
                     </svg>
-                    <input type="email" placeholder="mail@site.com" required name="e-mail" bind:value={emailField} />
+                    <input type="email" placeholder="mail@site.com" required name="e-mail" class="bg-listenin-primary-light" bind:value={emailField} />
                 </label>
             </div>
             <!-- Username input -->
             {#if userIsRegistering}
                 <div class="m-2">
-                    <label class="input validator w-full">
+                    <label class="input validator w-full bg-listenin-primary-light">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <g
                                 stroke-linejoin="round"
@@ -163,7 +168,7 @@
                             minlength="3"
                             maxlength="30"
                             title="Only letters, numbers or dash"
-                            class="w-full"
+                            class="w-full bg-listenin-primary-light"
                             name="username"
                             bind:value={usernameField}
                         />
@@ -172,7 +177,7 @@
             {/if}
             <!-- Password input -->
             <div class="m-2">
-                <label class="input validator w-full">
+                <label class="input validator w-full bg-listenin-primary-light">
                     <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g
                             stroke-linejoin="round"
@@ -193,6 +198,7 @@
                         required
                         placeholder="Password"
                         minlength="8"
+                        class="bg-listenin-primary-light"
                         title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
                         bind:value={passwordField}
                     />
@@ -201,7 +207,7 @@
             <!-- Submit button -->
             <div class="flex justify-center">
                 <button
-                    class="btn w-90"
+                    class="btn w-90 bg-listenin-primary"
                     type="submit"
                     disabled={userIsRegistering ? !registrationIsValid : !loginIsValid}
                     formaction={actionURI}
