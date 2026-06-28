@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { SongFull, SongDB } from '../types';
-	import { hashSong, albumArtIsStored } from '../util/util';
+	import { albumArtIsStored, hashAlbum } from '../util/util';
 
 	let { song, width, height, api, fetchArt = false } = $props();
 	let albumArtURL: string = $state('');
@@ -24,7 +24,7 @@
 					if (songDB !== null) {
 						getAlbumArt(songDB?.musicbrainzIds ?? null).then((artResponse) => {
 							if (artResponse !== null) {
-								sessionStorage.setItem(hashSong(song), artResponse);
+								sessionStorage.setItem(hashAlbum(song), artResponse);
 								albumArtURL = artResponse;
 								isLoading = false;
 							}
