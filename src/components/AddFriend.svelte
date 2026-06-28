@@ -21,6 +21,7 @@
 
     export function hide() {
         isVisible = false;
+        friendName = "";
     }
 
     function handleKeydown(e: KeyboardEvent) {

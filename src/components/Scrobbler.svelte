@@ -47,6 +47,9 @@
 
     export function hide() {
         isVisible = false;
+        scrobbleSong = "";
+        scrobbleArtist = "";
+        scrobbleAlbum = "";
     }
 
     function onMouseDown() {
