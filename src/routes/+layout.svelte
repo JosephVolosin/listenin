@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/css/fonts.css'
 	import './layout.css';
 	import { invalidate } from '$app/navigation'
 	import { onMount } from 'svelte'

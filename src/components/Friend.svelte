@@ -37,7 +37,7 @@
 </script>
 
 <div class="friend grid grid-cols-1 grid-rows-2 bottom-2">
-    <div>{userData.username}</div>
+    <div class="font-bold">{userData.username}</div>
     <div class="flex justify-center mt-auto mb-2">
         {#if lastPlayed !== null}
             <Song
