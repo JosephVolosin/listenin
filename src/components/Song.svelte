@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { SongFull, SongDB } from '../types';
-	import { hashSong, songArtIsStored } from '../util/util';
+	import { hashSong, albumArtIsStored } from '../util/util';
 
 	let { song, width, height, api, fetchArt = false } = $props();
 	let albumArtURL: string = $state('');
@@ -13,7 +13,7 @@
 		if (fetchArt === true && song !== null) {
 			isLoading = true;
 			// Check if album art URL is already in local storage
-			const artStorage = songArtIsStored(song);
+			const artStorage = albumArtIsStored(song);
 			if (artStorage !== null) {
 				albumArtURL = artStorage;
 				isLoading = false;
@@ -50,7 +50,6 @@
 
 	async function getAlbumArt(musicBrainzIds: string[] | null): Promise<string | null> {
 		if (musicBrainzIds !== null) {
-			// TODO: This is broken, need to keep trying IDs until one hits
 			for (const musicBrainzId of musicBrainzIds) {
 				albumArtURL = (await api.getAlbumArt(musicBrainzId)) ?? '';
 				// Return first hit

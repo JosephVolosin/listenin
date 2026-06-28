@@ -1,5 +1,5 @@
 import type { Recording, Release, SongDB } from '../types';
-import { convertDateToObj, dateIsEarlierThan } from './util';
+import { convertDateToObj } from './util';
 
 export class MusicAPI {
 	readonly musicBrainzAPI: string = 'https://musicbrainz.org/ws/2';
@@ -14,7 +14,7 @@ export class MusicAPI {
 
 		const params = new URLSearchParams();
 		params.append('fmt', 'json');
-		params.append('query', `recording: "${name}" AND artist:"${artist}"`);
+		params.append('query', `recording: "${album}" AND artist:"${artist}"`);
 
 		const response = await fetch(`${this.musicBrainzAPI}/recording?${params}`, {
 			method: 'GET',
@@ -50,7 +50,7 @@ export class MusicAPI {
 				);
 			}
 		} else {
-			console.error(`"${name}" by "${artist}" was not found`);
+			console.error(`"${album}" by "${artist}" was not found`);
 		}
 		return new Promise<SongDB | null>((resolve) => resolve(null));
 	}
