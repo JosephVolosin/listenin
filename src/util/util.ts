@@ -2,18 +2,18 @@ import { DateTime } from 'luxon';
 import type { SongFull } from '../types';
 import { Md5 } from 'ts-md5';
 
-const RELEASE_DATE_FORMAT = "yyyy-MM-dd";
-const RELEASE_YEAR_FORMAT = "yyyy";
-const RELEASE_YEAR_MONTH_FORMAT = "yyyy-MM";
+const RELEASE_DATE_FORMAT = 'yyyy-MM-dd';
+const RELEASE_YEAR_FORMAT = 'yyyy';
+const RELEASE_YEAR_MONTH_FORMAT = 'yyyy-MM';
 
 export function convertDateToObj(date: string): DateTime | undefined {
-    if (/\d{4}/.exec(date) !== null) {
-        return DateTime.fromFormat(date, RELEASE_YEAR_FORMAT);
-    } else if (/\d{4}-\d{2}/.exec(date) !== null) {
-        return DateTime.fromFormat(date, RELEASE_YEAR_MONTH_FORMAT);
-    } else if (/\d{4}-\d{2}-\d{2}/.exec(date) !== null) {
-        return DateTime.fromFormat(date, RELEASE_DATE_FORMAT);
-    }
+	if (/\d{4}/.exec(date) !== null) {
+		return DateTime.fromFormat(date, RELEASE_YEAR_FORMAT);
+	} else if (/\d{4}-\d{2}/.exec(date) !== null) {
+		return DateTime.fromFormat(date, RELEASE_YEAR_MONTH_FORMAT);
+	} else if (/\d{4}-\d{2}-\d{2}/.exec(date) !== null) {
+		return DateTime.fromFormat(date, RELEASE_DATE_FORMAT);
+	}
 }
 
 /**
@@ -25,37 +25,36 @@ export function convertDateToObj(date: string): DateTime | undefined {
  *                format on the right-hand side of the comparison.
  */
 export function dateIsEarlierThan(dateLHS: string, dateRHS: string): boolean {
-    const lhsConverted: DateTime | undefined = convertDateToObj(dateLHS);
-    const rhsConverted: DateTime | undefined = convertDateToObj(dateRHS);
-    
+	const lhsConverted: DateTime | undefined = convertDateToObj(dateLHS);
+	const rhsConverted: DateTime | undefined = convertDateToObj(dateRHS);
 
-    // TODO: Add in error handling, this was invalid below:
-    // if (!lhsConverted.isValid || rhsConverted.isValid) {
-    //     console.error(`Failed to convert dates: ${lhsConverted} <= ${rhsConverted}`);
-    //     return false
-    // }
-    if (lhsConverted !== undefined && rhsConverted !== undefined) {
-        if (lhsConverted.toMillis() <= rhsConverted.toMillis()) {
-            return true;
-        }
-    }
-    return false;
+	// TODO: Add in error handling, this was invalid below:
+	// if (!lhsConverted.isValid || rhsConverted.isValid) {
+	//     console.error(`Failed to convert dates: ${lhsConverted} <= ${rhsConverted}`);
+	//     return false
+	// }
+	if (lhsConverted !== undefined && rhsConverted !== undefined) {
+		if (lhsConverted.toMillis() <= rhsConverted.toMillis()) {
+			return true;
+		}
+	}
+	return false;
 }
 
 export function hashSong(song: SongFull) {
-    // TODO: Do I even need to hash this?
-    return Md5.hashStr(`${song.name}:${song.album}:${song.artist}`);
+	// TODO: Do I even need to hash this?
+	return Md5.hashStr(`${song.name}:${song.album}:${song.artist}`);
 }
 
 export function songArtIsStored(song: SongFull): string | null {
-    const songHash = hashSong(song);
-    const storageURL = localStorage.getItem(songHash)
-    if (storageURL) {
-        return storageURL;
-    }
-    return null;
+	const songHash = hashSong(song);
+	const storageURL = localStorage.getItem(songHash);
+	if (storageURL) {
+		return storageURL;
+	}
+	return null;
 }
 
 export function isEven(num: number): boolean {
-    return num % 2 === 0;
+	return num % 2 === 0;
 }
