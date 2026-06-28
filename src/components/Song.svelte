@@ -24,7 +24,6 @@
 					if (songDB !== null) {
 						getAlbumArt(songDB?.musicbrainzIds ?? null).then((artResponse) => {
 							if (artResponse !== null) {
-								console.log('Art request successful');
 								sessionStorage.setItem(hashSong(song), artResponse);
 								albumArtURL = artResponse;
 								isLoading = false;

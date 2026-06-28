@@ -4,7 +4,7 @@
 	import Scrobbler from '../components/Scrobbler.svelte';
 	import UserLogin from '../components/UserLogin.svelte';
 	import Sidebar from '../components/Sidebar.svelte';
-	import { type ActionResultTypes } from '../types.ts';
+	import { type ActionResultTypes, type Scrobble } from '../types.ts';
 	import { MusicAPI } from '../util/api.ts';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -26,6 +26,8 @@
 	let error: string = $state('');
 	let successAlert: HTMLDivElement;
 	let success: string = $state('');
+
+	let latestScrobbles: Scrobble[] = $state([]);
 
 	const handleLogout: SubmitFunction = () => {
 		return async ({ update, result }) => {
@@ -67,6 +69,17 @@
 		}, 5000);
 
 		return () => clearInterval(interval);
+	});
+
+	// Track the length of the retrieved scrobble history to know if we've retrieved new data (scrobbles are never deleted)
+	$effect(() => sessionStorage.setItem('scrobbleHistory', scrobbles.length.toString()));
+
+	$effect(() => {
+		// const lastHistoryLength = sessionStorage.getItem("scrobbleHistory");
+		// If the amount of songs in history didn't change, we don't need to update anything
+		if (latestScrobbles.length !== scrobbles.length) {
+			latestScrobbles = scrobbles;
+		}
 	});
 </script>
 
@@ -144,7 +157,7 @@
 	</div>
 	{#if drawSidebar}
 		<div class="sidebar right-0 flex bg-listenin-primary-dark">
-			<Sidebar {scrobbles} api={musicAPI} />
+			<Sidebar scrobbles={latestScrobbles} api={musicAPI} />
 		</div>
 	{/if}
 	<div

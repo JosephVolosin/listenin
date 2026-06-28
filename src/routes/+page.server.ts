@@ -1,10 +1,10 @@
-import { fail, redirect, type Actions } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import { supabase } from '../util/supabase';
 import type { PageServerLoad } from './$types';
 import type { FriendMapEntry, Scrobble } from '../types';
 
 export const load: PageServerLoad = async ({ depends, url, locals: { supabase } }) => {
-	const { data, error } = await supabase.auth.getClaims();
+	// const { data, error } = await supabase.auth.getClaims();
 	const userResponse = await supabase.auth.getUser();
 
 	depends('supabase:user_data');
@@ -172,7 +172,6 @@ export const actions: Actions = {
 		const song = data.get('song')?.toString();
 		const artist = data.get('artist')?.toString();
 		const album = data.get('album')?.toString();
-		const user_id = data.get('user_id')?.toString();
 
 		if (song !== undefined && artist !== undefined && album !== undefined) {
 			const { error } = await locals.supabase.from('scrobbles').insert({
