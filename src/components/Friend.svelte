@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Song from './Song.svelte';
-	import type { Scrobble, SongFull, User } from '../types';
+	import type { Scrobble, User } from '../types';
 
 	let { api, bgColor, userId } = $props();
 
 	const songWidth = '335px';
 	const songHeight = '75px';
 
-	let userData: User = $state({ username: '', scrobbles: [], user_id: userId });
+	let userData: User = $derived({ username: '', scrobbles: [], user_id: userId });
 	let lastPlayed: Scrobble | null = $state(null);
 
 	onMount(async () => {

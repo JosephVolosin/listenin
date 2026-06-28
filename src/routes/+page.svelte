@@ -4,7 +4,7 @@
 	import Scrobbler from '../components/Scrobbler.svelte';
 	import UserLogin from '../components/UserLogin.svelte';
 	import Sidebar from '../components/Sidebar.svelte';
-	import { type ActionResultTypes, type User } from '../types.ts';
+	import { type ActionResultTypes } from '../types.ts';
 	import { MusicAPI } from '../util/api.ts';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -13,7 +13,7 @@
 	import { isEven } from '../util/util.ts';
 
 	let { data } = $props();
-	let { claims, user, supabase, friends, scrobbles } = $derived(data);
+	let { user, friends, scrobbles } = $derived(data);
 
 	const musicAPI = new MusicAPI();
 
@@ -32,9 +32,10 @@
 			update();
 			if (result.type === 'success') {
 				handleSendAlert(result.type, result?.data?.message ?? 'Logged out successfully.');
-			} else {
+			} else if (result.type === 'error') {
 				handleSendAlert(result.type, result?.error ?? 'Unknown error');
 			}
+			// TODO: Do we care about handling the others? We don't anticipate those responses
 		};
 	};
 
@@ -200,11 +201,5 @@
 
 	.grid-container div.footer {
 		grid-area: footer;
-	}
-
-	.grid-friends {
-		display: grid;
-		grid-template-rows: 1vh 1vh;
-		grid-template-columns: 1vw 1vw 1vw 1vw;
 	}
 </style>
