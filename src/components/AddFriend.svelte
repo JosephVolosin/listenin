@@ -48,7 +48,7 @@
 
 <!-- TODO: calculate center of screen to position this -->
 <div
-    class="z-999999 rounded-lg bg-white absolute"
+    class="z-999999 rounded-lg bg-listenin-primary-dark absolute"
     style:left=33%
     style:top=33%
     style:height={height}px
@@ -65,11 +65,11 @@
     </div>
     <form method="POST" name="addFriend" action={actionURI} use:enhance={handleAdd}>
         <div class="flex justify-center items-center">
-            <input type="text" name="friend" placeholder="Friend's name..." class="input ml-2 mr-2 mb-2 w-80% flex" bind:value={friendName} />
+            <input type="text" name="friend" placeholder="Friend's name..." class="input ml-2 mr-2 mb-2 w-80% flex bg-listenin-primary-light" bind:value={friendName} />
         </div>
         <div class="flex justify-center items-center">
             {#if !isLoading}
-                <button class="btn btn-sm flex" disabled={isAddDisabled}>
+                <button class="btn btn-sm flex bg-listenin-primary" disabled={isAddDisabled}>
                     Add
                 </button>
             {:else}

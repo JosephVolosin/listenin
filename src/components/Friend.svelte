@@ -3,7 +3,7 @@
 	import Song from "./Song.svelte";
 	import type { Scrobble, SongFull, User } from "../types";
 
-    let { api, userId } = $props();
+    let { api, bgColor, userId } = $props();
     
     const songWidth = "335px";
     const songHeight = "75px";
@@ -36,8 +36,10 @@
 
 </script>
 
-<div class="friend grid grid-cols-1 grid-rows-2 bottom-2">
-    <div class="font-bold">{userData.username}</div>
+<div
+    class="grid grid-cols-1 grid-rows-2 bottom-2 h-full {bgColor}"
+>
+    <div class="font-bold text-3xl">{userData.username}</div>
     <div class="flex justify-center mt-auto mb-2">
         {#if lastPlayed !== null}
             <Song
@@ -52,13 +54,3 @@
         {/if}
     </div>
 </div>
-
-<style>
-    .friend {
-        border-top: 1px;
-        border-left: 1px;
-        border-right: 1px;
-        border-style: solid;
-        border-color: black;
-    }
-</style>

@@ -55,3 +55,7 @@ export function songArtIsStored(song: SongFull): string | null {
     }
     return null;
 }
+
+export function isEven(num: number): boolean {
+    return num % 2 === 0;
+}

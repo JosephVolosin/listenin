@@ -99,7 +99,7 @@
 <!-- TODO: fix a11y thing below -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
-    class="p-2 gap-3 z-999999 bg-white rounded-lg cursor-move"
+    class="p-2 gap-3 z-999999 bg-listenin-primary rounded-lg cursor-move"
     style:user-select=none
     style:position=absolute
     style:left={left}px

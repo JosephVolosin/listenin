@@ -10,6 +10,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { isEven } from '../util/util.ts';
 
     let { data } = $props();
     let { claims, user, supabase, friends, scrobbles } = $derived(data);
@@ -76,7 +77,7 @@
     style:min-height="100vh"
 >
     <div
-        class="friends bg-blue-100"
+        class="friends"
         style:height=94vh
     >
         <div role="alert" class="alert alert-success absolute h-14 w-full" style:display='none' bind:this={successAlert}>
@@ -93,41 +94,43 @@
         </div>
     </div>
     <div
-        class="friends bg-blue-100"
+        class="friends bg-listenin-primary"
         style:height=94vh
     >
-
         <div class="grid grid-cols-4 grid-rows-2 text-center h-full">
-            {#each friends as friend (friend)}
-                <Friend
-                    api={musicAPI}
-                    userId={friend}
-                />
+            {#each friends as friend, count (friend)}
+                <div class="rounded-sm h-full">
+                    <Friend
+                        api={musicAPI}
+                        bgColor={isEven(count) ? "bg-listenin-accent" : "bg-listenin-primary-light"}
+                        userId={friend}
+                    />
+                </div>
             {/each}
         </div>
     </div>
     {#if drawSidebar}
         <div
-            class="sidebar flex right-0 bg-blue-200"
+            class="sidebar flex right-0 bg-listenin-primary-dark"
         >
             <Sidebar {scrobbles} api={musicAPI}/>
         </div>
     {/if}
     <div
-        class="footer border-t flex bottom-0 bg-blue-200 w-full items-center justify-center"
+        class="footer border-t flex bottom-0 w-full items-center justify-center bg-listenin-primary-dark"
         style:height=6vh
     >
         {#if user !== null}
             <span class="font-bold absolute left-0 m-2">{user.user_metadata["username"]}</span> <!-- TODO: username is a column but the Supabase type doesn't support it? -->
             <div class="flex">
                 <button
-                    class="btn flex justify-center items-center"
+                    class="btn flex justify-center items-center bg-listenin-primary"
                     onclick={() => scrobbler.show()}
                 >
                     Scrobble
                 </button>
                 <button
-                    class="btn flex justify-center items-center"
+                    class="btn flex justify-center items-center bg-listenin-primary"
                     onclick={() => handleAddFriend()}
                 >
                     Add Friend
@@ -135,14 +138,14 @@
             </div>
             <form method="post" action="?/logout" use:enhance={handleLogout}>
                 <button
-                    class="btn flex justify-center items-center"
+                    class="btn flex justify-center items-center bg-listenin-primary"
                 >
                     Logout
                 </button> 
             </form>
         {:else}
             <button
-                class="btn flex justify-center items-center"
+                class="btn flex justify-center items-center bg-listenin-primary"
                 onclick={() => userLogin.show()}
             >
                 Login

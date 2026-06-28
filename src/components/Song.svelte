@@ -67,7 +67,7 @@
 <div
     style:min-width={width}
     style:height={height}
-    class="rounded-lg bg-blue-300 inline-flex border-black border ml-2 mr-2"
+    class="rounded-lg inline-flex border-black border ml-2 mr-2 bg-listenin-primary"
 >
     <div
         class="album-art border-r border-r-black h-full flex justify-center"

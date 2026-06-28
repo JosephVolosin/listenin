@@ -74,7 +74,7 @@
 <!-- TODO: fix a11y thing below -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
-    class="p-2 gap-3 z-999999 bg-white rounded-lg cursor-move"
+    class="p-2 gap-3 z-999999 bg-listenin-primary-dark rounded-lg cursor-move"
     style:user-select=none
     style:position=absolute
     style:left={left}px
@@ -95,23 +95,23 @@
     <!-- TODO: Finish implementing form action -->
     <form method="POST" name="scrobble" action={actionURI} use:enhance={handleScrobble}>
         <div class="grid gap-2 justify-center">
-            <label class="input w-95">
+            <label class="input w-95 bg-listenin-primary-light">
             Song
-            <input type="text" name="song" class="grow" bind:value={scrobbleSong} />
+            <input type="text" name="song" class="grow bg-listenin-primary-light" bind:value={scrobbleSong} />
             </label>
 
-            <label class="input w-95">
+            <label class="input w-95 bg-listenin-primary-light">
             Artist
-            <input type="text" name="artist" class="grow" bind:value={scrobbleArtist} />
+            <input type="text" name="artist" class="grow bg-listenin-primary-light" bind:value={scrobbleArtist} />
             </label>
 
-            <label class="input w-95">
+            <label class="input w-95 bg-listenin-primary-light">
             Album
-            <input type="text" name="album" class="grow" bind:value={scrobbleAlbum} />
+            <input type="text" name="album" class="grow bg-listenin-primary-light" bind:value={scrobbleAlbum} />
             </label>
 
             {#if !isLoading}
-                <button class="btn w-95" disabled={isScrobbleDisabled}>
+                <button class="btn w-95 bg-listenin-primary" disabled={isScrobbleDisabled}>
                     Scrobble
                 </button>
             {:else}

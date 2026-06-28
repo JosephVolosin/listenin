@@ -2,6 +2,17 @@
 @plugin '@tailwindcss/typography';
 @plugin 'daisyui';
 
-* {
-    font-family: 'LT Superior', sans-serif
+@theme {
+    --color-listenin-primary: #2B5748;
+    --color-listenin-primary-dark: #273338;
+    --color-listenin-primary-light: #618764;
+    --color-listenin-primary-text: #E9E4D7;
+    --color-listenin-secondary-text: #757575;
+    --color-listenin-accent: #9CB080;
 }
+
+* {
+    font-family: 'LT Superior', sans-serif;
+    color: var(--color-listenin-primary-text)
+}
+
