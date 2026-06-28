@@ -48,7 +48,7 @@ export function hashSong(song: SongFull) {
 
 export function songArtIsStored(song: SongFull): string | null {
 	const songHash = hashSong(song);
-	const storageURL = localStorage.getItem(songHash);
+	const storageURL = sessionStorage.getItem(songHash);
 	if (storageURL) {
 		return storageURL;
 	}
