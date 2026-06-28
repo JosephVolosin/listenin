@@ -3,9 +3,11 @@ import { supabase } from '../util/supabase';
 import type { PageServerLoad } from './$types';
 import type { FriendMapEntry, Scrobble } from '../types';
 
-export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ depends, url, locals: { supabase } }) => {
   const { data, error } = await supabase.auth.getClaims();
   const userResponse = await supabase.auth.getUser();
+
+  depends('supabase:user_data');
 
   // Retrieve user's friends
   // TODO: Should this be here or in the UI?
@@ -179,7 +181,6 @@ export const actions: Actions = {
       const { error } = await locals.supabase
         .from('scrobbles')
         .insert({
-          user_id,
           album,
           artist,
           song

@@ -8,11 +8,11 @@
     import { MusicAPI } from "../util/api.ts";
 	import { enhance } from "$app/forms";
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { onMount } from 'svelte';
+	import { invalidate } from '$app/navigation';
 
     let { data } = $props();
     let { claims, user, supabase, friends, scrobbles } = $derived(data);
-
-    $effect(() => console.log(user));
 
     const musicAPI = new MusicAPI();
 
@@ -58,6 +58,14 @@
     function handleAddFriend() {
         addFriend.show();
     }
+
+    onMount(() => {
+        const interval = setInterval(() => {
+            invalidate("supabase:user_data");
+        }, 5000);
+
+        return () => clearInterval(interval);
+    })
 </script>
 
 <AddFriend currentUser={user?.id} sendAlert={(type: ActionResultTypes, message: string) => handleSendAlert(type, message)} bind:this={addFriend} />
