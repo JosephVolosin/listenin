@@ -61,7 +61,7 @@ export const load: PageServerLoad = async ({ depends, url, locals: { supabase } 
 
 export const actions: Actions = {
 	addFriend: async ({ request, locals }) => {
-		const formData = await request.formData();
+		const formData = await request.json();
 		const currentUser = formData.get('user_id')?.toString();
 		const friendName = formData.get('friend')?.toString();
 
@@ -98,7 +98,7 @@ export const actions: Actions = {
 		return fail(400, { error: 'Invalid friend name, or no user is logged in.' });
 	},
 	login: async ({ request, locals }) => {
-		const data = await request.formData();
+		const data = await request.json();
 
 		const email = data.get('e-mail')?.toString();
 		const password = data.get('password')?.toString();
@@ -141,7 +141,7 @@ export const actions: Actions = {
 		return { success: true, message: 'Logged out successfully.' };
 	},
 	register: async ({ request }) => {
-		const data = await request.formData();
+		const data = await request.json();
 
 		const email = data.get('e-mail')?.toString();
 		const password = data.get('password')?.toString();
@@ -168,7 +168,7 @@ export const actions: Actions = {
 	},
 	scrobble: async (event) => {
 		const { request, locals } = event;
-		const data = await request.formData();
+		const data = await request.json();
 		const song = data.get('song')?.toString();
 		const artist = data.get('artist')?.toString();
 		const album = data.get('album')?.toString();
