@@ -121,7 +121,7 @@ export const actions: Actions = {
 			return {
 				success: true,
 				message: `Welcome ${loginResponse.data.user.user_metadata['username']}!`
-			}; // TODO: username is a column, but not supported in the Supabase type?
+			};
 		}
 
 		return fail(400, { error: 'Login failed' });
