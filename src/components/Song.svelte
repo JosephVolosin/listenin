@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { SongFull, SongDB } from '../types';
-	import { albumArtIsStored, hashAlbum } from '../util/util';
+	import { albumArtIsStored, formatSupabaseDate, hashAlbum } from '../util/util';
 
 	let { song, width, height, api, fetchArt = false } = $props();
 	let albumArtURL: string = $state('');
@@ -74,17 +74,29 @@
 			<img class="h-full w-full" src={albumArtURL} alt="Album art" />
 		{/if}
 	</div>
-	<div class="song-info ml-2 h-full text-left" style:width="75%">
-		<div class="song mt-1 mb-1 max-h-6 w-full overflow-hidden text-lg font-bold">{song.name}</div>
+	<div class="song-info h-full text-left" style:width="75%">
 		<div
-			class="artist text-md overflow-hdden w-full"
+			class="song text-lg font-bold h-6 overflow-hidden text-ellipsis"
+		>
+			{song.name}
+		</div>
+		<div
+			class="artist text-sm h-5 text-nowrap overflow-hidden text-ellipsis"
 			style:font-style="italic"
-			style:margin-bottom="-4px"
 		>
 			{song.artist}
 		</div>
-		<div class="album w-full overflow-hidden text-sm text-gray-600" style:font-style="italic">
+		<div
+			class="album text-sm text-gray-600 h-5 text-nowrap overflow-hidden text-ellipsis"
+			style:font-style="italic"
+		>
 			{song.album}
+		</div>
+		<div
+			class="text-xs text-gray-600 h-5 text-nowrap overflow-hidden text-ellipsis "
+			style:font-style="italic"
+		>
+			{formatSupabaseDate(song.timestamp)}
 		</div>
 	</div>
 </div>
