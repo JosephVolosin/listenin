@@ -6,7 +6,7 @@
 	let { api, scrobbles }: { api: MusicAPI; scrobbles: Scrobble[] } = $props();
 
 	const songWidth: string = '95%';
-	const songHeight: string = '75px';
+	const songHeight: string = '83px';
 
 	let scrobblesVisible: Scrobble[] = $state([]);
 
