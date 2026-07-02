@@ -6,6 +6,23 @@ const RELEASE_DATE_FORMAT = 'yyyy-MM-dd';
 const RELEASE_YEAR_FORMAT = 'yyyy';
 const RELEASE_YEAR_MONTH_FORMAT = 'yyyy-MM';
 
+/**
+ * Formats a date string (expecting a timestamptz) to a human-readable format.
+ * Example: 02:53:01 Jun 12, 2026
+ * @param date A date string from Supabase, representing a timestamptz
+ * @returns A string in the format of "HH:MM:SS MMM DD, YYYY".
+ */
+export function formatSupabaseDate(date: string): string {
+	const dateAsObj = new Date(date);
+	const hours = dateAsObj.getHours().toString().padStart(2, "0");
+	const minutes = dateAsObj.getMinutes().toString().padStart(2, "0");
+	const seconds = dateAsObj.getSeconds().toString().padStart(2, "0");
+	const month = dateAsObj.toLocaleString('default', { month: 'short' });
+	const day = dateAsObj.getDate().toString();
+	const year = dateAsObj.getFullYear().toString();
+	return `${hours}:${minutes}:${seconds} ${month} ${day}, ${year}`
+}
+
 export function convertDateToObj(date: string): DateTime | undefined {
 	if (/\d{4}/.exec(date) !== null) {
 		return DateTime.fromFormat(date, RELEASE_YEAR_FORMAT);
