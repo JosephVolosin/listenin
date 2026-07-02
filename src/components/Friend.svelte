@@ -6,7 +6,7 @@
 	let { api, bgColor, userId } = $props();
 
 	const songWidth = '335px';
-	const songHeight = '75px';
+	const songHeight = '85px';
 
 	let userData: User = $derived({ username: '', scrobbles: [], user_id: userId });
 	let lastPlayed: Scrobble | null = $state(null);

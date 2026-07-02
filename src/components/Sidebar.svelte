@@ -6,7 +6,7 @@
 	let { api, scrobbles }: { api: MusicAPI; scrobbles: Scrobble[] } = $props();
 
 	const songWidth: string = '95%';
-	const songHeight: string = '75px';
+	const songHeight: string = '100%';
 
 	let scrobblesVisible: Scrobble[] = $state([]);
 
@@ -25,7 +25,7 @@
 
 <div class="history mt-2 flex w-full flex-col items-center gap-2">
 	<div class="text-cener font-bold">History</div>
-	<div class="m-2 w-full">
+	<div class="grid grid-cols-1 gap-2 w-full">
 		{#each scrobblesVisible as scrobble (scrobble)}
 			<Song song={scrobble} height={songHeight} width={songWidth} {api} fetchArt={true} />
 		{/each}
