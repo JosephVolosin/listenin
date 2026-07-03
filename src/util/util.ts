@@ -1,10 +1,32 @@
 import { DateTime } from 'luxon';
-import type { SongFull } from '../types';
+import type { Scrobble, SongFull } from '../types';
 import { Md5 } from 'ts-md5';
 
 const RELEASE_DATE_FORMAT = 'yyyy-MM-dd';
 const RELEASE_YEAR_FORMAT = 'yyyy';
 const RELEASE_YEAR_MONTH_FORMAT = 'yyyy-MM';
+
+export function scrobbleHistoriesMatch(historyOld: Scrobble[], historyNew: Scrobble[]): boolean {
+	if (historyOld.length !== historyNew.length) {
+		return false;
+	}
+	let historiesMatch = true;
+	for (let index = 0; index < historyOld.length; index++) {
+		const oldScrobble = historyOld[index];
+		const newScrobble = historyNew[index];
+		// If histories match, each index should have the same exact scrobble
+		if (
+			oldScrobble.album !== newScrobble.album
+			|| oldScrobble.artist !== newScrobble.artist
+			|| oldScrobble.name !== newScrobble.name
+			|| oldScrobble.timestamp !== newScrobble.timestamp
+		) {
+			historiesMatch = false;
+			break;
+		}
+	}
+	return historiesMatch;
+}
 
 /**
  * Formats a date string (expecting a timestamptz) to a human-readable format.

@@ -2,10 +2,12 @@ import { fail, type Actions } from '@sveltejs/kit';
 import { supabase } from '../util/supabase';
 import type { PageServerLoad } from './$types';
 import type { FriendMapEntry, Scrobble } from '../types';
+import { SCROBBLE_PAGE_SIZE } from '../util/constants';
 
-export const load: PageServerLoad = async ({ depends, url, locals: { supabase } }) => {
-	// const { data, error } = await supabase.auth.getClaims();
+export const load: PageServerLoad = async ({ depends, url, locals: { supabase }, cookies }) => {
 	const userResponse = await supabase.auth.getUser();
+	const userScrobblePage: string = cookies.get('userScrobblePage') ?? "0";
+	const userScrobblePageNum: number = parseInt(userScrobblePage);
 
 	depends('supabase:user_data');
 
@@ -13,6 +15,7 @@ export const load: PageServerLoad = async ({ depends, url, locals: { supabase } 
 	// TODO: Should this be here or in the UI?
 	let userFriends: string[] = [];
 	let userScrobbles: Scrobble[] = [];
+	let userScrobblesCount = 0;
 	const {
 		data: { user: currentUser }
 	} = userResponse;
@@ -42,12 +45,15 @@ export const load: PageServerLoad = async ({ depends, url, locals: { supabase } 
 			// Gather personal history
 			const scrobblesResponse = await supabase
 				.from('scrobbles')
-				.select('album, artist, name:song, timestamp')
+				.select('album, artist, name:song, timestamp', { count: 'exact' })
+				.order('timestamp', { ascending: false })
+				.range(userScrobblePageNum * SCROBBLE_PAGE_SIZE, (userScrobblePageNum * SCROBBLE_PAGE_SIZE) + SCROBBLE_PAGE_SIZE-1)
 				.eq('user_id', currentUser.id);
-			if (scrobblesResponse.data) {
+			if (scrobblesResponse.data && scrobblesResponse.count) {
 				userScrobbles = scrobblesResponse.data;
+				userScrobblesCount = scrobblesResponse.count;
 			} else {
-				console.error(`Unable to retrieve user's history, ${scrobblesResponse.error.message}`);
+				console.error(`Unable to retrieve user's history, ${scrobblesResponse.error?.message ?? 'Unknown error'}`);
 			}
 		}
 	}
@@ -55,6 +61,7 @@ export const load: PageServerLoad = async ({ depends, url, locals: { supabase } 
 		url: url.origin,
 		user: userResponse.data.user,
 		scrobbles: userScrobbles,
+		scrobblesTotal: userScrobblesCount,
 		friends: userFriends
 	};
 };
