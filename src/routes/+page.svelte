@@ -6,8 +6,6 @@
 	import Sidebar from '../components/Sidebar.svelte';
 	import { type ActionResultTypes, type Scrobble } from '../types.ts';
 	import { MusicAPI } from '../util/api.ts';
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { isEven, scrobbleHistoriesMatch } from '../util/util.ts';
@@ -29,17 +27,11 @@
 
 	let latestScrobbles: Scrobble[] = $state([]);
 
-	const handleLogout: SubmitFunction = () => {
-		return async ({ update, result }) => {
-			update();
-			if (result.type === 'success') {
-				handleSendAlert(result.type, result?.data?.message ?? 'Logged out successfully.');
-			} else if (result.type === 'error') {
-				handleSendAlert(result.type, result?.error ?? 'Unknown error');
-			}
-			// TODO: Do we care about handling the others? We don't anticipate those responses
-		};
-	};
+	async function handleLogout() {
+		const logoutResp = await fetch("/api/logout", { method: 'POST' });
+		const logoutRespText = await logoutResp.text();
+		handleSendAlert('success', logoutRespText);
+	}
 
 	function handleSendAlert(type: ActionResultTypes, message: string) {
 		if (type === 'failure') {
@@ -57,10 +49,6 @@
 				success = '';
 			}, 5000);
 		}
-	}
-
-	function handleAddFriend() {
-		addFriend.show();
 	}
 
 	onMount(() => {
@@ -142,7 +130,7 @@
 			<span>{error}</span>
 		</div>
 	</div>
-	<div class="friends bg-listenin-primary" style:height="94vh">
+	<div class="friends bg-listenin-primary h-full">
 		<div class="grid h-full grid-cols-4 grid-rows-2 text-center">
 			{#each friends as friend, count (friend)}
 				<div class="h-full rounded-sm">
@@ -157,50 +145,25 @@
 	</div>
 	{#if drawSidebar}
 		<div class="sidebar right-0 flex bg-listenin-primary-dark">
-			<Sidebar scrobbles={latestScrobbles} {scrobblesTotal} api={musicAPI} />
+			<Sidebar
+				scrobbles={latestScrobbles}
+				{scrobblesTotal}
+				api={musicAPI}
+				onLogin={() => userLogin.show()}
+				onScrobble={() => scrobbler.show()}
+				onLogout={() => handleLogout()}
+				onAddFriend={() => addFriend.show()}
+				{user}
+			/>
 		</div>
 	{/if}
-	<div
-		class="bottom-0 footer flex w-full items-center justify-center border-t bg-listenin-primary-dark"
-		style:height="7vh"
-	>
-		{#if user !== null}
-			<span class="absolute left-0 m-2 font-bold">{user.user_metadata['username']}</span>
-			<!-- TODO: username is a column but the Supabase type doesn't support it? -->
-			<div class="flex">
-				<button
-					class="btn flex items-center justify-center bg-listenin-primary"
-					onclick={() => scrobbler.show()}
-				>
-					Scrobble
-				</button>
-				<button
-					class="btn flex items-center justify-center bg-listenin-primary"
-					onclick={() => handleAddFriend()}
-				>
-					Add Friend
-				</button>
-			</div>
-			<form method="post" action="?/logout" use:enhance={handleLogout}>
-				<button class="btn flex items-center justify-center bg-listenin-primary"> Logout </button>
-			</form>
-		{:else}
-			<button
-				class="btn flex items-center justify-center bg-listenin-primary"
-				onclick={() => userLogin.show()}
-			>
-				Login
-			</button>
-		{/if}
-	</div>
 </div>
 
 <style>
 	.grid-container {
 		display: grid;
 		grid-template-areas:
-			'friends sidebar'
-			'footer footer';
+			'friends sidebar';
 		grid-template-columns: 84vw 16vw;
 	}
 
@@ -210,9 +173,5 @@
 
 	.grid-container div.sidebar {
 		grid-area: sidebar;
-	}
-
-	.grid-container div.footer {
-		grid-area: footer;
 	}
 </style>

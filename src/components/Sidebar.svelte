@@ -5,8 +5,28 @@
 	import type { MusicAPI } from '../util/api';
 	import { SCROBBLE_PAGE_SIZE } from '../util/constants';
 	import Song from './Song.svelte';
+	import { DoorClosedFill, KeyFill, MusicNoteBeamed, PersonFill } from 'svelte-bootstrap-icons';
+	import type { User } from '@supabase/supabase-js';
 
-	let { api, scrobbles, scrobblesTotal }: { api: MusicAPI; scrobbles: Scrobble[] | null, scrobblesTotal: number } = $props();
+	let {
+		api,
+		scrobbles,
+		scrobblesTotal,
+		onLogin,
+		onScrobble,
+		onLogout,
+		onAddFriend,
+		user
+	}: {
+		api: MusicAPI,
+		scrobbles: Scrobble[] | null,
+		scrobblesTotal: number,
+		onLogin(): void,
+		onScrobble(): void,
+		onLogout(): void,
+		onAddFriend(): void,
+		user: User | null
+	} = $props();
 
 	const songWidth: string = '95%';
 	const songHeight: string = '9.5vh';
@@ -14,6 +34,10 @@
 	let scrobblesVisible: Scrobble[] = $state([]);
 	let currentScrobblePage = $state("0");
 	let currentScrobblePageNum = $derived(parseInt(currentScrobblePage));
+
+	function handleLogin() {
+		onLogin();
+	}
 
 	onMount(async () => {
 		// Reset page iteration
@@ -55,4 +79,44 @@
 			{/each}
 		</div>
 	{/if}
+	<div class="w-full flex justify-center">
+		<div class="dropdown dropdown-top">
+			<div tabindex="0" role="button" class="btn m-2 bg-listenin-primary" style:width="75%">
+				{#if user}
+					{user.user_metadata['username']}
+				{:else}
+					Login
+				{/if}
+			</div>
+			<ul tabindex="-1" class="dropdown-content menu bg-listenin-primary rounded-box z-1 w-64 p-2 shadow-sm ml-[-82px]">
+				{#if user}
+					<li style:height=33%>
+						<div class="flex">
+							<MusicNoteBeamed fill="var(--color-listenin-icon)" />
+							<button onclick={() => onScrobble()}>Scrobble</button>
+						</div>
+					</li>
+					<li style:height=33%>
+						<div class="flex">
+							<PersonFill fill="var(--color-listenin-icon)" />
+							<button onclick={() => onAddFriend()}>Add Friend</button>
+						</div>
+					</li>
+					<li style:height=33%>
+						<div class="flex">
+							<DoorClosedFill fill="var(--color-listenin-icon)" />
+							<button onclick={() => onLogout()}>Logout</button>
+						</div>
+					</li>
+				{:else}
+					<li style:height=33>
+						<div class="flex">
+							<KeyFill fill="var(--color-listenin-icon)" />
+							<button onclick={() => handleLogin()}>Login</button>
+						</div>
+					</li>
+				{/if}
+			</ul>
+		</div>
+	</div>
 </div>
