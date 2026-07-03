@@ -10,10 +10,10 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { isEven } from '../util/util.ts';
+	import { isEven, scrobbleHistoriesMatch } from '../util/util.ts';
 
 	let { data } = $props();
-	let { user, friends, scrobbles } = $derived(data);
+	let { user, friends, scrobbles, scrobblesTotal } = $derived(data);
 
 	const musicAPI = new MusicAPI();
 
@@ -75,9 +75,9 @@
 	$effect(() => sessionStorage.setItem('scrobbleHistory', scrobbles.length.toString()));
 
 	$effect(() => {
-		// const lastHistoryLength = sessionStorage.getItem("scrobbleHistory");
-		// If the amount of songs in history didn't change, we don't need to update anything
-		if (latestScrobbles.length !== scrobbles.length) {
+		// Compare scrobbles between the last history and the newest one
+		const historiesMatch = scrobbleHistoriesMatch(latestScrobbles, scrobbles);
+		if (!historiesMatch) {
 			latestScrobbles = scrobbles;
 		}
 	});
@@ -157,12 +157,12 @@
 	</div>
 	{#if drawSidebar}
 		<div class="sidebar right-0 flex bg-listenin-primary-dark">
-			<Sidebar scrobbles={latestScrobbles} api={musicAPI} />
+			<Sidebar scrobbles={latestScrobbles} {scrobblesTotal} api={musicAPI} />
 		</div>
 	{/if}
 	<div
 		class="bottom-0 footer flex w-full items-center justify-center border-t bg-listenin-primary-dark"
-		style:height="6vh"
+		style:height="7vh"
 	>
 		{#if user !== null}
 			<span class="absolute left-0 m-2 font-bold">{user.user_metadata['username']}</span>

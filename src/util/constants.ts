@@ -1,0 +1,1 @@
+export const SCROBBLE_PAGE_SIZE = 8;
