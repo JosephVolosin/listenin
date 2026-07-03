@@ -5,8 +5,8 @@
 
 	let { api, bgColor, userId } = $props();
 
-	const songWidth = '335px';
-	const songHeight = '85px';
+	const songWidth = '15vw';
+	const songHeight = '9.5vh';
 
 	let userData: User = $derived({ username: '', scrobbles: [], user_id: userId });
 	let lastPlayed: Scrobble | null = $state(null);
@@ -33,7 +33,7 @@
 	});
 </script>
 
-<div class="bottom-2 grid h-full grid-cols-1 grid-rows-2 {bgColor}">
+<div class="bottom-2 grid grid-cols-1 grid-rows-2 {bgColor} rounded-4xl m-2" style:height="96%">
 	<div class="text-3xl font-bold">{userData.username}</div>
 	<div class="mt-auto mb-2 flex justify-center">
 		{#if lastPlayed !== null}

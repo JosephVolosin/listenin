@@ -63,18 +63,21 @@
 </script>
 
 <div
-	style:min-width={width}
-	style:height
-	class="mr-2 ml-2 inline-flex rounded-lg border border-black bg-listenin-primary"
+	style:max-width={width}
+	style:max-height={height}
+	style:width={width}
+	style:height={height}
+
+	class="mr-2 ml-2 inline-flex rounded-lg border border-black bg-listenin-primary overflow-hidden"
 >
-	<div class="album-art flex h-full justify-center border-r border-r-black" style:width="25%">
+	<div class="album-art flex h-full justify-center border-r border-r-black" style:width="28%" style:min-width="28%">
 		{#if isLoading}
 			<span class="loading loading-sm loading-spinner"></span>
 		{:else}
-			<img class="h-full w-full" src={albumArtURL} alt="Album art" />
+			<img class="max-h-full max-w-full h-full w-full" src={albumArtURL} alt="Album art" />
 		{/if}
 	</div>
-	<div class="song-info h-full text-left" style:width="75%">
+	<div class="song-info h-full text-left ml-1" style:width="75%">
 		<div
 			class="song text-lg font-bold h-6 overflow-hidden text-ellipsis"
 		>
