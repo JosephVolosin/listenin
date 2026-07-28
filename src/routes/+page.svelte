@@ -34,7 +34,7 @@
 	}
 
 	function handleSendAlert(type: ActionResultTypes, message: string) {
-		if (type === 'failure') {
+		if (type === 'failure' || type === 'error') {
 			errorAlert.style.display = '';
 			error = message;
 			setTimeout(() => {
@@ -89,7 +89,7 @@
 	<div class="friends" style:height="94vh">
 		<div
 			role="alert"
-			class="absolute alert h-14 w-full alert-success"
+			class="absolute alert h-14 w-full border-0 bg-listenin-primary-light"
 			style:display="none"
 			bind:this={successAlert}
 		>

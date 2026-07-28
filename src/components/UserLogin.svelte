@@ -127,7 +127,7 @@
 		<form method="POST" name={formName} action={actionURI} use:enhance={handleSubmit}>
 			<!-- E-mail input -->
 			<div class="m-2">
-				<label class="validator input w-full bg-listenin-primary-light">
+				<label class="input w-full bg-listenin-primary">
 					<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<g
 							stroke-linejoin="round"
@@ -145,7 +145,7 @@
 						placeholder="mail@site.com"
 						required
 						name="e-mail"
-						class="bg-listenin-primary-light"
+						class="bg-listenin-primary"
 						bind:value={emailField}
 					/>
 				</label>
@@ -153,7 +153,7 @@
 			<!-- Username input -->
 			{#if userIsRegistering}
 				<div class="m-2">
-					<label class="validator input w-full bg-listenin-primary-light">
+					<label class="input w-full bg-listenin-primary">
 						<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 							<g
 								stroke-linejoin="round"
@@ -174,7 +174,7 @@
 							minlength="3"
 							maxlength="30"
 							title="Only letters, numbers or dash"
-							class="w-full bg-listenin-primary-light"
+							class="w-full bg-listenin-primary"
 							name="username"
 							bind:value={usernameField}
 						/>
@@ -183,7 +183,7 @@
 			{/if}
 			<!-- Password input -->
 			<div class="m-2">
-				<label class="validator input w-full bg-listenin-primary-light">
+				<label class="input w-full bg-listenin-primary">
 					<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<g
 							stroke-linejoin="round"
@@ -204,7 +204,7 @@
 						required
 						placeholder="Password"
 						minlength="8"
-						class="bg-listenin-primary-light"
+						class="bg-listenin-primary"
 						title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
 						bind:value={passwordField}
 					/>
@@ -213,7 +213,7 @@
 			<!-- Submit button -->
 			<div class="flex justify-center">
 				<button
-					class="btn w-90 bg-listenin-primary"
+					class="btn w-90 bg-listenin-primary-light"
 					type="submit"
 					disabled={userIsRegistering ? !registrationIsValid : !loginIsValid}
 					formaction={actionURI}
